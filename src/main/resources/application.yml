@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: pec-api
+  datasource:
+    url: ${ORACLE_JDBC_URL:jdbc:oracle:thin:@//localhost:1521/XEPDB1}
+    username: ${ORACLE_USERNAME:pec}
+    password: ${ORACLE_PASSWORD:pec}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+        format_sql: true
+    open-in-view: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: ${KAFKA_GROUP_ID:pec-api-group}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env
+
+app:
+  topics:
+    request: ${KAFKA_TOPIC_REQUEST:TP_SAN_PROCESSO_SIMPLES}
+    reply: ${KAFKA_TOPIC_REPLY:TP_SAN_ENVIO_ANUENCIA_MCR}
+  validityHours: ${DEFAULT_VALIDITY_HOURS:24}
+  pecWeb:
+    callbackUrl: ${PEC_WEB_CALLBACK_URL:http://localhost:3000/api/anuencia/callback}
+  defaultLocal: ${DEFAULT_LOCAL:Sao Paulo/SP}
